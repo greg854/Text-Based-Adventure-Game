@@ -59,6 +59,7 @@ def ifIsInBounds(x,y):
 # Used to check if we are trying to move to a location where we hit a wall
 # If this returns true, you can move to this location and update your current location
 # otherwise, you can't and you shouldn't update your location
+#return True if the player can move in that direction, otherwise return false
 def isThisAWall(nextmove):
     if nextmove == 'W':
         futurepositionX = X
@@ -94,42 +95,35 @@ def isThisAWall(nextmove):
     else:
         return True
 
-def enteringRoomOne(nextmove):
-    if nextmove == 'A':
-        futurepositionX = X
-        futurepositionY = Y - 1
-        futureposition = FLOOR_MAP[futurepositionY][futurepositionX]
-        if (futureposition == 'D1'):
-            print("You entered the first room")
-            return False
-def enteringRoomTwo(nextmove):
-    if nextmove == 'D':
-        futurepositionX = X
-        futurepositionY = Y - 1
-        futureposition = FLOOR_MAP[futurepositionY][futurepositionX]
-        if (futureposition == 'D2'):
-            print("You entered the second room")
-            return False
-def enteringRoomThree(nextmove):
-    if nextmove == 'A':
-        futurepositionX = X
-        futurepositionY = Y - 1
-        futureposition = FLOOR_MAP[futurepositionY][futurepositionX]
-        if (futureposition == 'D3'):
-            print("You entered the third room")
-            return False
-def enteringRoomFour(nextmove):
-    if nextmove == 'A':
-        futurepositionX = X
-        futurepositionY = Y - 1
-        futureposition = FLOOR_MAP[futurepositionY][futurepositionX]
-        if (futureposition == 'D4'):
-            print("You entered the fourth room")
-            return False
+def enteringRoomOne():
+    if FLOOR_MAP[X][Y] == 'D1' or FLOOR_MAP[X][Y] == 'R1':
+        #If we got here, we are at the doorway to room 1 or in the room
+        return True
+    return False
+
+def enteringRoomTwo():
+    if FLOOR_MAP[X][Y] == 'D2' or FLOOR_MAP[X][Y] == 'R2':
+        # If we got here, we are at the doorway to room 2 or in the room
+        return True
+    return False
+
+def enteringRoomThree():
+    if FLOOR_MAP[X][Y] == 'D3' or FLOOR_MAP[X][Y] == 'R3':
+        # If we got here, we are at the doorway to room 3 or in the room
+        return True
+    return False
+
+def enteringRoomFour():
+    if FLOOR_MAP[X][Y] == 'D4' or FLOOR_MAP[X][Y] == 'R4':
+        # If we got here, we are at the doorway to room 4 or in the room
+        return True
+    return False
 
 
 
 def play():
+    global X
+    global Y
     # opening text
     print("You wake up in a dark hallway, it's cold and unfamiliar")
 
@@ -151,16 +145,21 @@ def play():
         print("You look back to in front of you and start moving")
         print()
         # controls explanation
-        controls = input("Type 'H' for help or any other character to continue")
+        controls = input("Type 'H' for help or any other character to continue ")
         if controls == 'H' or controls == 'h':
-            print("W to move up, A to move left, S to move back, D to move down, R for descriptions and E to exit the game")
+            print("W to move up\n A to move left\n S to move back\n D to move down\n R for descriptions\n E to exit the game\n Z to respawn")
 
         print()
         while True:
 
             # The if else statements used to define movement
-            mainmovement = input("What will you do?")
-
+            mainmovement = input("What will you do? ")
+            if mainmovement == 'z' or mainmovement == 'Z':
+                X = 5
+                Y = 9
+                print('Your vision blurs and you find yourself in the doorway again...')
+                print()
+                continue
             if mainmovement == 'e' or mainmovement == 'E':
                 break
             if mainmovement == 'W' or mainmovement == 'w':
@@ -171,42 +170,38 @@ def play():
                     print("You moved up one step")
                     moveForward()
             elif mainmovement == 'S' or mainmovement == 's':
+                if ifIsInBounds (X, Y + 1) == False:
+                    print("You can't go further in this direction")
+                    continue
                 if isThisAWall('S') == False:
                     print("You moved down one step")
                     moveBack()
             elif mainmovement == 'A' or mainmovement == 'a':
+                if ifIsInBounds (X - 1, Y) == False:
+                    print("You can't go further in this direction")
+                    continue
                 if isThisAWall('A') == False:
                     print("You moved left one step")
                     moveLeft()
             elif mainmovement == 'D' or mainmovement == 'd':
+                if ifIsInBounds (X + 1, Y) == False:
+                    print("You can't go further in this direction")
+                    continue
                 if isThisAWall('D') == False:
                     print("You moved right one step")
                     moveright()
             elif mainmovement == 'R' or mainmovement == 'r':
-                if enteringRoomOne == True:
+                if enteringRoomOne() == True:
                     print(ROOM_1)
-                # Need to fix this
-                elif (FLOOR_MAP[X, Y] == 'R1'):
-                    print()
-                # Need to fix this
-                elif (FLOOR_MAP[X, Y] == 'R1'):
-                    print()
-                # Need to fix this
-                elif (FLOOR_MAP[X, Y] == 'R1'):
-                    print()
-                # Need to fix this
-                elif (FLOOR_MAP[X, Y] == 'R1'):
-                    print()
-                # Need to fix this
-                elif FLOOR_MAP[X, Y] == 'D1':
-                    print(ROOM_1)
-                # Need to fix this
-                elif (FLOOR_MAP[X, Y] == 'D2'):
-                    print()
-                # Need to fix this
-                elif (FLOOR_MAP[X, Y] == 'D3'):
-                    print()
-                # Need to fix this
+                elif enteringRoomTwo() == True:
+                    print(ROOM_2)
+                elif enteringRoomThree() == True:
+                    print(ROOM_3)
+                elif enteringRoomFour() == True:
+                    print(ROOM_4)
+                # Check if we are in the hallway
+                elif (FLOOR_MAP[X, Y] == 'F'):
+                    print('You\'re in the hallway')
                 else:
                     print()
 
@@ -215,5 +210,5 @@ def play():
 if __name__ == '__main__':
     # Which function to run first, if we are running this as a module
     # Remove the pound sign below this if you want to have a diagram of the map
-    printLayout()
+    #printLayout()
     play()
